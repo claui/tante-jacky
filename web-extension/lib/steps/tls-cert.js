@@ -1,8 +1,6 @@
 import Step from "../step.js";
 
-const FRONTEND_VERSION = "0.1.0";
-
-export default class FrontendVersionCheck extends Step {
+export default class TlsCertificateCheck extends Step {
   #states;
 
   constructor() {
@@ -13,8 +11,8 @@ export default class FrontendVersionCheck extends Step {
 
   run() {
     this.#states.success.enter({
-      title: "Frontend-Version",
-      value: FRONTEND_VERSION,
+      title: "TLS-Zertifikat der Website",
+      value: "ok",
     });
     return this;
   }

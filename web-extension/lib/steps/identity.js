@@ -1,6 +1,6 @@
 import Step from "../step.js";
 
-export default class HttpsCheckingStep extends Step {
+export default class WebsiteIdentityCheck extends Step {
   #states;
 
   constructor() {
@@ -11,8 +11,9 @@ export default class HttpsCheckingStep extends Step {
 
   run() {
     this.#states.success.enter({
-      title: "Zertifikat der Website",
+      title: "Identität der Website",
       value: "ok",
+      details: "spk-aschaffenburg.de",
     });
     return this;
   }
