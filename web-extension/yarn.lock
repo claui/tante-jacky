@@ -220,6 +220,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chai-as-promised@npm:^7.1.1":
+  version: 7.1.1
+  resolution: "chai-as-promised@npm:7.1.1"
+  dependencies:
+    check-error: ^1.0.2
+  peerDependencies:
+    chai: ">= 2.1.2 < 5"
+  checksum: 7262868a5b51a12af4e432838ddf97a893109266a505808e1868ba63a12de7ee1166e9d43b5c501a190c377c1b11ecb9ff8e093c89f097ad96c397e8ec0f8d6a
+  languageName: node
+  linkType: hard
+
 "chai@npm:^4.3.6":
   version: 4.3.6
   resolution: "chai@npm:4.3.6"
@@ -1177,15 +1188,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"root-workspace-0b6124@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "root-workspace-0b6124@workspace:."
-  dependencies:
-    chai: ^4.3.6
-    mocha: ^9.2.2
-  languageName: unknown
-  linkType: soft
-
 "safe-buffer@npm:^5.1.0, safe-buffer@npm:~5.2.0":
   version: 5.2.1
   resolution: "safe-buffer@npm:5.2.1"
@@ -1324,6 +1326,16 @@ __metadata:
   checksum: 3dda818de06ebbe5b9653e07842d9479f3555ebc77e9a0280caf5a14fb877ffee9ed57007c3b78f5a6324b8dbeec648d9e97a24e2ed9fdb81ddc69ea07100f4a
   languageName: node
   linkType: hard
+
+"tante-jacky@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "tante-jacky@workspace:."
+  dependencies:
+    chai: ^4.3.6
+    chai-as-promised: ^7.1.1
+    mocha: ^9.2.2
+  languageName: unknown
+  linkType: soft
 
 "tar@npm:^6.1.11, tar@npm:^6.1.2":
   version: 6.1.11

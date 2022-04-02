@@ -1,0 +1,18 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "tante-jacky (web extension): Run tests",
+      "type": "process",
+      "command": "yarn",
+      "args": [
+        "test"
+      ],
+      "group": "test",
+      "presentation": {
+        "clear": true,
+        "showReuseMessage": false
+      }
+    }
+  ]
+}
