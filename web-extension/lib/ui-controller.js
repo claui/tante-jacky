@@ -1,11 +1,31 @@
-import FrontendVersionCheck from "./steps/frontend-version.js";
-import TlsCertificateCheck from "./steps/tls-cert.js";
-import WebsiteIdentityCheck from "./steps/identity.js";
+import {
+  FrontendVersionCheck,
+  TlsCertificateCheck,
+  WebsiteIdentityCheck,
+  TanChallengeCheck,
+} from "./steps.js";
+
+import { VERSION } from "./version.js";
 
 export default class UiController {
+  #defaultDependencies = {
+    frontendVersionProvider: { get: () => VERSION },
+  };
+
+  #frontendVersionProvider;
+  #upstreamIdentityProvider;
+
+  constructor(dependencies) {
+    ({
+      frontendVersionProvider: this.#frontendVersionProvider,
+      upstreamIdentityProvider: this.#upstreamIdentityProvider,
+    } = { ...this.#defaultDependencies, ...dependencies });
+  }
+
   async *run() {
-    yield new FrontendVersionCheck().run();
-    yield new TlsCertificateCheck().run();
-    yield new WebsiteIdentityCheck().run();
+    yield new FrontendVersionCheck(this.#frontendVersionProvider).run();
+    yield new TlsCertificateCheck(this.#upstreamIdentityProvider).run();
+    yield new WebsiteIdentityCheck(this.#upstreamIdentityProvider).run();
+    yield new TanChallengeCheck().run();
   }
 }

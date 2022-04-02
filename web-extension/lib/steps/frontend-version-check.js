@@ -1,20 +1,20 @@
 import Step from "../step.js";
 
-const FRONTEND_VERSION = "0.1.0";
-
 export default class FrontendVersionCheck extends Step {
+  #frontendVersionProvider;
   #states;
 
-  constructor() {
+  constructor(frontendVersionProvider) {
     const states = {};
     super(states);
+    this.#frontendVersionProvider = frontendVersionProvider;
     this.#states = states;
   }
 
   run() {
     this.#states.success.enter({
       title: "Frontend-Version",
-      value: FRONTEND_VERSION,
+      value: this.#frontendVersionProvider.get(),
     });
     return this;
   }
