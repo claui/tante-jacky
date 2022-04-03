@@ -5,13 +5,13 @@ export default class TlsCertificateCheck extends Step {
 
   constructor() {
     const states = {};
-    super(states);
+    super("TLS-Zertifikat der Website", states);
     this.#states = states;
   }
 
   run() {
     this.#states.success.enter({
-      title: "TLS-Zertifikat der Website",
+      title: this.name,
       value: "ok",
     });
     return this;

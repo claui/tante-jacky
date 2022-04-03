@@ -23,9 +23,19 @@ export default class UiController {
   }
 
   async *run() {
-    yield new FrontendVersionCheck(this.#frontendVersionProvider).run();
-    yield new TlsCertificateCheck(this.#upstreamIdentityProvider).run();
-    yield new WebsiteIdentityCheck(this.#upstreamIdentityProvider).run();
+    yield* this.#mustSucceed(
+      new FrontendVersionCheck(this.#frontendVersionProvider).run(),
+      new TlsCertificateCheck(this.#upstreamIdentityProvider).run(),
+      new WebsiteIdentityCheck(this.#upstreamIdentityProvider).run()
+    );
+
     yield new TanChallengeCheck().run();
+  }
+
+  async *#mustSucceed(...checks) {
+    for (const check of checks) {
+      yield check;
+      await check.didEnterSuccessState;
+    }
   }
 }

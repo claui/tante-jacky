@@ -6,14 +6,14 @@ export default class FrontendVersionCheck extends Step {
 
   constructor(frontendVersionProvider) {
     const states = {};
-    super(states);
+    super("Frontend-Version", states);
     this.#frontendVersionProvider = frontendVersionProvider;
     this.#states = states;
   }
 
   run() {
     this.#states.success.enter({
-      title: "Frontend-Version",
+      title: this.name,
       value: this.#frontendVersionProvider.get(),
     });
     return this;

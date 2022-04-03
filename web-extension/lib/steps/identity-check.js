@@ -11,7 +11,7 @@ export default class WebsiteIdentityCheck extends Step {
 
   constructor(upstreamIdentityProvider) {
     const states = {};
-    super(states);
+    super("Identität der Website", states);
     this.#states = states;
     this.#upstreamIdentityProvider = upstreamIdentityProvider;
   }
@@ -24,22 +24,18 @@ export default class WebsiteIdentityCheck extends Step {
   async #assertDomainNameAllowed() {
     const domainName = await this.#upstreamIdentityProvider.getDomainName();
 
-    const responseTemplate = {
-      title: "Identität der Website",
-    };
-
     const allowlistedParentDomainName =
       WebsiteIdentityCheck.#findAllowlistedParentDomainName(domainName);
 
     if (allowlistedParentDomainName) {
       this.#states.success.enter({
-        ...responseTemplate,
+        title: this.name,
         value: "ok",
         details: allowlistedParentDomainName.hostname,
       });
     } else {
       this.#states.failed.enter({
-        ...responseTemplate,
+        title: this.name,
         value: "fehlgeschlagen",
         details: `Die Domain „${domainName}“ ist für dieses Verfahren nicht freigegeben.`,
       });

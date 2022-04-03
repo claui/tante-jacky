@@ -5,13 +5,13 @@ export default class TanChallengeCheck extends Step {
 
   constructor() {
     const states = {};
-    super(states);
+    super("Seite fordert TAN für eine Zahlung", states);
     this.#states = states;
   }
 
   run() {
     this.#states.failed.enter({
-      title: "Seite fordert TAN für eine Zahlung",
+      title: this.name,
       value: "fehlgeschlagen",
       details:
         "Ihr Browser fordert gerade keine TAN für eine Zahlung." +

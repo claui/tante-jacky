@@ -1,4 +1,6 @@
 export default class Step {
+  #name;
+
   #states = {
     failed: {},
     running: {},
@@ -9,7 +11,8 @@ export default class Step {
   didEnterRunningState;
   didEnterSuccessState;
 
-  constructor(states) {
+  constructor(name, states) {
+    this.#name = name;
     Object.assign(states, this.#states);
 
     this.didEnterFailureState = new Promise((resolve, reject) => {
@@ -26,5 +29,13 @@ export default class Step {
       this.#states.success.enter = resolve;
       this.#states.success.fail = reject;
     });
+  }
+
+  get name() {
+    return this.#name;
+  }
+
+  toString() {
+    return this.#name;
   }
 }
