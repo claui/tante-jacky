@@ -14,6 +14,5 @@ export default class TlsCertificateCheck extends Step {
       title: this.name,
       value: "ok",
     });
-    return this;
   }
 }

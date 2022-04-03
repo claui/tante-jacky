@@ -1,3 +1,5 @@
+import StateBlockedError from "./errors/state-blocked.js";
+import StepFailedError from "./errors/step-failed.js";
 import {
   FrontendVersionCheck,
   TlsCertificateCheck,
@@ -23,19 +25,37 @@ export default class UiController {
   }
 
   async *run() {
-    yield* this.#mustSucceed(
-      new FrontendVersionCheck(this.#frontendVersionProvider).run(),
-      new TlsCertificateCheck(this.#upstreamIdentityProvider).run(),
-      new WebsiteIdentityCheck(this.#upstreamIdentityProvider).run()
-    );
+    try {
+      yield* this.#waitForAllToSucceedInOrder(
+        new FrontendVersionCheck(this.#frontendVersionProvider),
+        new TlsCertificateCheck(this.#upstreamIdentityProvider),
+        new WebsiteIdentityCheck(this.#upstreamIdentityProvider)
+      );
 
-    yield new TanChallengeCheck().run();
+      yield new TanChallengeCheck().start();
+    } catch (error) {
+      if (error instanceof StateBlockedError) {
+        // Already handled through `state.failed`.
+        // All we need to do now is stop.
+      } else {
+        throw error;
+      }
+    }
   }
 
-  async *#mustSucceed(...checks) {
-    for (const check of checks) {
-      yield check;
-      await check.didEnterSuccessState;
+  async *#waitForAllToSucceed(...steps) {
+    for (const step of steps) {
+      step.start();
+      yield step;
+    }
+    await Promise.all(steps.map((step) => step.didEnterSuccessState));
+  }
+
+  async *#waitForAllToSucceedInOrder(...steps) {
+    for (const step of steps) {
+      step.start();
+      yield step;
+      await step.didEnterSuccessState;
     }
   }
 }

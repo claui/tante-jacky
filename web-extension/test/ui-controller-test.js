@@ -160,7 +160,7 @@ describe("UiController", function () {
                   title: "Seite fordert TAN für eine Zahlung",
                   value: "fehlgeschlagen",
                   details:
-                    "Ihr Browser fordert gerade keine TAN für eine Zahlung." +
+                    "Ihr Browser fordert gerade keine TAN für eine Zahlung. " +
                     "Veranlassen Sie eine Zahlung, die eine TAN erfordert.",
                 });
               });
@@ -231,15 +231,18 @@ describe("UiController", function () {
         });
 
         context("we’re requesting more steps", function () {
-          it("blocks", async function () {
+          it("stops yielding", async function () {
             for (let stepIndex = 0; stepIndex < 3; stepIndex++) {
               await steps.next(); // skip
             }
 
             await Promise.race([
-              steps.next().then(({ value: step }) => {
+              steps.next().then(({ value: step, done }) => {
+                if (done) {
+                  return Promise.resolve();
+                }
                 expect.fail(
-                  `Expected generator to block but it yielded: ${step}`
+                  `Expected generator to finish but it yielded: ${step}`
                 );
               }),
               sleep(50),

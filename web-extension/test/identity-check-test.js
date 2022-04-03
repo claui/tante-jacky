@@ -12,7 +12,7 @@ describe("WebsiteIdentityCheck", function () {
         identityCheck = new WebsiteIdentityCheck({
           getDomainName: () =>
             Promise.resolve(new DomainName("www.spk-aschaffenburg.de")),
-        }).run();
+        }).start();
       });
 
       describe("#didEnterSuccessState", function () {
@@ -46,7 +46,7 @@ describe("WebsiteIdentityCheck", function () {
             Promise.resolve(
               new DomainName("spk-aschaffenburg.de.badbank.example.com")
             ),
-        }).run();
+        }).start();
       });
 
       describe("#didEnterFailureState", function () {

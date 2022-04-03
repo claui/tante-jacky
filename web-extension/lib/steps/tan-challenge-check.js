@@ -1,3 +1,4 @@
+import StepFailedError from "../errors/step-failed.js";
 import Step from "../step.js";
 
 export default class TanChallengeCheck extends Step {
@@ -10,13 +11,9 @@ export default class TanChallengeCheck extends Step {
   }
 
   run() {
-    this.#states.failed.enter({
-      title: this.name,
-      value: "fehlgeschlagen",
-      details:
-        "Ihr Browser fordert gerade keine TAN für eine Zahlung." +
-        "Veranlassen Sie eine Zahlung, die eine TAN erfordert.",
-    });
-    return this;
+    throw new StepFailedError(
+      "Ihr Browser fordert gerade keine TAN für eine Zahlung. " +
+        "Veranlassen Sie eine Zahlung, die eine TAN erfordert."
+    );
   }
 }

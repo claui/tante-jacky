@@ -1,3 +1,4 @@
+import StepFailedError from "../errors/step-failed.js";
 import DomainName from "../net/domain-name.js";
 import Step from "../step.js";
 
@@ -16,12 +17,7 @@ export default class WebsiteIdentityCheck extends Step {
     this.#upstreamIdentityProvider = upstreamIdentityProvider;
   }
 
-  run() {
-    this.#assertDomainNameAllowed().catch(console.error);
-    return this;
-  }
-
-  async #assertDomainNameAllowed() {
+  async run() {
     const domainName = await this.#upstreamIdentityProvider.getDomainName();
 
     const allowlistedParentDomainName =
@@ -34,11 +30,9 @@ export default class WebsiteIdentityCheck extends Step {
         details: allowlistedParentDomainName.hostname,
       });
     } else {
-      this.#states.failed.enter({
-        title: this.name,
-        value: "fehlgeschlagen",
-        details: `Die Domain „${domainName}“ ist für dieses Verfahren nicht freigegeben.`,
-      });
+      throw new StepFailedError(
+        `Die Domain „${domainName}“ ist für dieses Verfahren nicht freigegeben.`
+      );
     }
   }
 

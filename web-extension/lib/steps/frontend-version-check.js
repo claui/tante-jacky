@@ -16,6 +16,5 @@ export default class FrontendVersionCheck extends Step {
       title: this.name,
       value: this.#frontendVersionProvider.get(),
     });
-    return this;
   }
 }
