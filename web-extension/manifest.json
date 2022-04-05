@@ -1,0 +1,21 @@
+{
+  "name": "Tante Jacky",
+  "manifest_version": 2,
+  "description": "Make German banking websites work with USB chipTAN readers",
+  "version": "0.1.0",
+  "homepage_url": "https://github.com/claui/tante-jacky/tree/main/web-extension",
+  "icons": {
+    "48": "assets/chip.svg"
+  },
+  "permissions": [
+    "activeTab"
+  ],
+  "optional_permissions": [
+    "nativeMessaging"
+  ],
+  "browser_action":{
+    "default_icon": "assets/chip.svg",
+    "default_title": "Tante Jacky",
+    "default_popup": "popup.html"
+  }
+}

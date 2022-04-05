@@ -1,0 +1,383 @@
+{
+  "id": "scripting",
+  "description": "Use the scripting API to execute script in different contexts.",
+  "permissions": [
+    "scripting"
+  ],
+  "min_manifest_version": 3,
+  "functions": [
+    {
+      "name": "executeScript",
+      "type": "function",
+      "description": "Injects a script into a target context. The script will be run at <code>document_idle</code>.",
+      "async": "callback",
+      "parameters": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/types/ScriptInjection"
+            },
+            {
+              "name": "injection",
+              "description": "The details of the script which to inject."
+            }
+          ]
+        },
+        {
+          "name": "callback",
+          "type": "function",
+          "description": "Invoked upon completion of the injection. The resulting array contains the result of execution for each frame where the injection succeeded.",
+          "parameters": [
+            {
+              "name": "results",
+              "type": "array",
+              "items": {
+                "$ref": "#/types/InjectionResult"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "insertCSS",
+      "type": "function",
+      "description": "Inserts a CSS stylesheet into a target context. If multiple frames are specified, unsuccessful injections are ignored.",
+      "async": "callback",
+      "parameters": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/types/CSSInjection"
+            },
+            {
+              "name": "injection",
+              "description": "The details of the styles to insert."
+            }
+          ]
+        },
+        {
+          "name": "callback",
+          "type": "function",
+          "description": "Invoked upon completion of the injection.",
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "name": "removeCSS",
+      "type": "function",
+      "description": "Removes a CSS stylesheet that was previously inserted by this extension from a target context.",
+      "async": "callback",
+      "parameters": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/types/CSSInjection"
+            },
+            {
+              "name": "injection",
+              "description": "The details of the styles to remove. Note that the <code>css</code>, <code>files</code>, and <code>origin</code> properties must exactly match the stylesheet inserted through <code>insertCSS</code>. Attempting to remove a non-existent stylesheet is a no-op."
+            }
+          ]
+        },
+        {
+          "name": "callback",
+          "type": "function",
+          "description": "Invoked upon completion of the injection.",
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "name": "registerContentScripts",
+      "type": "function",
+      "description": "Registers one or more content scripts for this extension.",
+      "async": "callback",
+      "parameters": [
+        {
+          "name": "scripts",
+          "type": "array",
+          "description": "Contains a list of scripts to be registered. If there are errors during script parsing/file validation, or if the IDs specified already exist, then no scripts are registered.",
+          "items": {
+            "$ref": "#/types/RegisteredContentScript"
+          }
+        },
+        {
+          "name": "callback",
+          "type": "function",
+          "description": "Invoked upon completion of the registration.",
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "name": "getRegisteredContentScripts",
+      "type": "function",
+      "description": "Returns all dynamically registered content scripts for this extension that match the given filter.",
+      "async": "callback",
+      "parameters": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/types/ContentScriptFilter"
+            },
+            {
+              "name": "filter",
+              "optional": true,
+              "description": "An object to filter the extension's dynamically registered scripts."
+            }
+          ]
+        },
+        {
+          "name": "callback",
+          "type": "function",
+          "description": "The resulting array contains the registered content scripts.",
+          "parameters": [
+            {
+              "name": "scripts",
+              "type": "array",
+              "items": {
+                "$ref": "#/types/RegisteredContentScript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "unregisterContentScripts",
+      "type": "function",
+      "description": "Unregisters one or more content scripts for this extension.",
+      "async": "callback",
+      "parameters": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/types/ContentScriptFilter"
+            },
+            {
+              "name": "filter",
+              "optional": true,
+              "description": "If specified, only unregisters dynamic content scripts which match the filter. Otherwise, all of the extension's dynamic content scripts are unregistered."
+            }
+          ]
+        },
+        {
+          "name": "callback",
+          "type": "function",
+          "description": "Invoked upon completion of the unregistration.",
+          "parameters": []
+        }
+      ]
+    }
+  ],
+  "definitions": {
+    "OptionalPermissionNoPrompt": {
+      "anyOf": [
+        {
+          "type": "string",
+          "enum": [
+            "scripting"
+          ],
+          "min_manifest_version": 3
+        }
+      ]
+    }
+  },
+  "refs": {
+    "scripting#/definitions/OptionalPermissionNoPrompt": {
+      "namespace": "manifest",
+      "type": "OptionalPermissionNoPrompt"
+    }
+  },
+  "types": {
+    "ScriptInjection": {
+      "type": "object",
+      "description": "Details of a script injection",
+      "properties": {
+        "args": {
+          "type": "array",
+          "description": "The arguments to curry into a provided function. This is only valid if the <code>func</code> parameter is specified. These arguments must be JSON-serializable.",
+          "items": {}
+        },
+        "files": {
+          "type": "array",
+          "description": "The path of the JS files to inject, relative to the extension's root directory. Exactly one of <code>files</code> and <code>func</code> must be specified.",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "func": {
+          "type": "function",
+          "description": "A JavaScript function to inject. This function will be serialized, and then deserialized for injection. This means that any bound parameters and execution context will be lost. Exactly one of <code>files</code> and <code>func</code> must be specified."
+        },
+        "target": {
+          "allOf": [
+            {
+              "$ref": "#/types/InjectionTarget"
+            },
+            {
+              "description": "Details specifying the target into which to inject the script."
+            }
+          ]
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "InjectionResult": {
+      "type": "object",
+      "description": "Result of a script injection.",
+      "properties": {
+        "frameId": {
+          "type": "integer",
+          "description": "The frame ID associated with the injection."
+        },
+        "result": {
+          "description": "The result of the script execution."
+        },
+        "error": {
+          "type": "object",
+          "description": "When the injection has failed, the error is exposed to the caller with this property.",
+          "properties": {
+            "message": {
+              "type": "string",
+              "description": "A message explaining why the injection has failed."
+            }
+          },
+          "required": [
+            "message"
+          ]
+        }
+      },
+      "required": [
+        "frameId"
+      ]
+    },
+    "InjectionTarget": {
+      "type": "object",
+      "properties": {
+        "frameIds": {
+          "type": "array",
+          "description": "The IDs of specific frames to inject into.",
+          "items": {
+            "type": "number"
+          }
+        },
+        "allFrames": {
+          "type": "boolean",
+          "description": "Whether the script should inject into all frames within the tab. Defaults to false. This must not be true if <code>frameIds</code> is specified."
+        },
+        "tabId": {
+          "type": "number",
+          "description": "The ID of the tab into which to inject."
+        }
+      },
+      "required": [
+        "tabId"
+      ]
+    },
+    "CSSInjection": {
+      "type": "object",
+      "properties": {
+        "css": {
+          "type": "string",
+          "description": "A string containing the CSS to inject. Exactly one of <code>files</code> and <code>css</code> must be specified."
+        },
+        "files": {
+          "type": "array",
+          "description": "The path of the CSS files to inject, relative to the extension's root directory. Exactly one of <code>files</code> and <code>css</code> must be specified.",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "origin": {
+          "type": "string",
+          "enum": [
+            "USER",
+            "AUTHOR"
+          ],
+          "default": "AUTHOR",
+          "description": "The style origin for the injection. Defaults to <code>'AUTHOR'</code>."
+        },
+        "target": {
+          "allOf": [
+            {
+              "$ref": "#/types/InjectionTarget"
+            },
+            {
+              "description": "Details specifying the target into which to inject the CSS."
+            }
+          ]
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "ContentScriptFilter": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "description": "The IDs of specific scripts to retrieve with <code>getRegisteredContentScripts()</code> or to unregister with <code>unregisterContentScripts()</code>.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "RegisteredContentScript": {
+      "type": "object",
+      "properties": {
+        "allFrames": {
+          "type": "boolean",
+          "description": "If specified true, it will inject into all frames, even if the frame is not the top-most frame in the tab. Each frame is checked independently for URL requirements; it will not inject into child frames if the URL requirements are not met. Defaults to false, meaning that only the top frame is matched."
+        },
+        "excludeMatches": {
+          "type": "array",
+          "description": "Excludes pages that this content script would otherwise be injected into.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "id": {
+          "type": "string",
+          "description": "The id of the content script, specified in the API call."
+        },
+        "js": {
+          "type": "array",
+          "description": "The list of JavaScript files to be injected into matching pages. These are injected in the order they appear in this array.",
+          "items": {
+            "$ref": "manifest#/types/ExtensionURL"
+          }
+        },
+        "matches": {
+          "type": "array",
+          "description": "Specifies which pages this content script will be injected into. Must be specified for <code>registerContentScripts()</code>.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "runAt": {
+          "allOf": [
+            {
+              "$ref": "extensionTypes#/types/RunAt"
+            },
+            {
+              "default": "document_idle",
+              "description": "Specifies when JavaScript files are injected into the web page. The preferred and default value is <code>document_idle</code>."
+            }
+          ]
+        }
+      },
+      "required": [
+        "id"
+      ]
+    }
+  }
+}
