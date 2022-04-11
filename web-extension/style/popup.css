@@ -19,7 +19,7 @@ section.step {
 }
 
 .step h2,
-.step icon,
+.step .icon,
 .step p,
 .step button {
   margin-top: 8px;
@@ -33,7 +33,7 @@ section.step {
   align-self: baseline;
 }
 
-.step icon {
+.step .icon {
   grid-column: 2;
   text-align: right;
   font-size: 13px;
@@ -47,10 +47,15 @@ section.step {
   align-self: baseline;
 }
 
+.step form {
+  display: grid;
+}
+
 .step button {
   grid-column: 4;
   font-size: 13px;
   align-self: baseline;
+  min-width: max-content;
 }
 
 .step small {
