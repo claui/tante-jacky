@@ -10,28 +10,22 @@
             media="screen"
             href="style/popup.css"
         />
-        <script src="lib/popup.js"></script>
+        <script src="lib/popup.js" defer></script>
     </head>
     <body>
         <main id="steps">
             <h1>Tante Jacky</h1>
-            <section class="step">
-                <h2>Frontend-Version</h2>
-                <p>0.1.0</p>
-            </section>
-            <section class="step">
-                <h2>TLS-Zertifikat der Website</h2>
-                <div class="icon">ø</div>
-                <p>ok</p>
-                <form>
-                    <button name="show" type="button">Details …</button>
-                </form>
-            </section>
-            <section class="step">
-                <h2>Identität der Website</h2>
-                <p>spk-aschaffenburg.de</p>
-                <small>Sparkasse Aschaffenburg-Alzenau</small>
-            </section>
+            <template id="template-step-success">
+                <section class="step">
+                    <h2></h2>
+                    <div class="icon"></div>
+                    <p></p>
+                    <small></small>
+                    <form>
+                        <button type="button"></button>
+                    </form>
+                </section>
+            </template>
         </main>
     </body>
 </html>
