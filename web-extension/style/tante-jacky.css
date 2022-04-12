@@ -4,7 +4,7 @@ h1 {
 
 #steps {
   display: grid;
-  grid-template-columns: 1.5fr 16px 1fr 0.5fr;
+  grid-template-columns: minmax(200px, 1.5fr) 16px minmax(200px, 1fr) minmax(100px, 0.5fr);
   grid-auto-rows: auto;
   align-items: baseline;
   column-gap: 8px;
