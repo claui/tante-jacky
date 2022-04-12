@@ -36,7 +36,7 @@ header p.subhead {
 }
 
 h2, p, button {
-  font-size: 13px;
+  font-size: 15px;
 }
 
 section.step {
@@ -65,13 +65,16 @@ section.step {
   grid-column: 2;
   align-self: baseline;
   justify-self: center;
-  width: 100%;
-  height: 100%;
+  width: 16px;
+  height: 16px;
+}
+
+.icon.warning {
+  margin-top: 10px;
 }
 
 .step p {
   grid-column: 3;
-  color: gray;
   align-self: baseline;
 }
 
