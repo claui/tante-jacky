@@ -16,7 +16,7 @@
   "browser_action":{
     "default_icon": "assets/chip.svg",
     "default_title": "Tante Jacky",
-    "default_popup": "popup.html",
+    "default_popup": "tante-jacky.html",
     "browser_style": true
   }
 }
