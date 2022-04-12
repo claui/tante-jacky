@@ -1,5 +1,4 @@
 import StateBlockedError from "./errors/state-blocked.js";
-import StepFailedError from "./errors/step-failed.js";
 import {
   FrontendVersionCheck,
   TlsCertificateCheck,

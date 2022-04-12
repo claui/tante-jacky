@@ -1,4 +1,4 @@
-let makeStep = function ({ title, value, icon, description, button }) {
+const makeStep = function ({ title, value, icon, description, button }) {
   const steps = document.getElementById("steps");
   const step = document
     .getElementById("template-step-success")
