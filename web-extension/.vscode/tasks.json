@@ -1,5 +1,18 @@
 {
   "version": "2.0.0",
+  "inputs": [
+    {
+      "description": "Firefox log configuration",
+      "id": "mozLog",
+      "type": "pickString",
+      "options": [
+        "Widget:2,WidgetPopup:2,WidgetScreen:2,WidgetWayland:2",
+        "Widget:3,WidgetPopup:3,WidgetScreen:3,WidgetWayland:3",
+        "Widget:4,WidgetPopup:4,WidgetScreen:4,WidgetWayland:4",
+        "sync,Widget:4,WidgetPopup:4,WidgetScreen:4,WidgetWayland:4"
+      ]
+    }
+  ],
   "tasks": [
     {
       "label": "tante-jacky (web extension): Run",
@@ -16,6 +29,29 @@
         "kind": "build",
         "isDefault": true
       },
+      "presentation": {
+        "clear": true,
+        "showReuseMessage": false
+      }
+    },
+    {
+      "label": "tante-jacky (web extension): Run extension and log events",
+      "type": "process",
+      "command": "env",
+      "args": [
+        // https://github.com/electron/electron/issues/28436
+        "-u",
+        "GDK_BACKEND",
+        "web-ext",
+        "--verbose",
+        "run"
+      ],
+      "options": {
+        "env": {
+          "MOZ_LOG": "${input:mozLog}"
+        }
+      },
+      "group": "build",
       "presentation": {
         "clear": true,
         "showReuseMessage": false
