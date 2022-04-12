@@ -18,5 +18,8 @@
     "default_title": "Tante Jacky",
     "default_popup": "tante-jacky.html",
     "browser_style": true
-  }
+  },
+  "web_accessible_resources": [
+    "assets/*.svg"
+  ]
 }

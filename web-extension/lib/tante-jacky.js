@@ -1,5 +1,13 @@
 import { sleep } from "./time.js";
 
+const ASSETS = {
+  warning: "assets/iso7010-w001.svg",
+}
+
+function assetUrl(assetName) {
+  return browser.runtime.getURL(ASSETS[assetName]);
+}
+
 function makeStep({ title, value, icon, description, button }) {
   const step = document
     .getElementById("template-step-success")
@@ -13,7 +21,9 @@ function makeStep({ title, value, icon, description, button }) {
   }
 
   if (icon) {
-    step.querySelector(".icon").textContent = icon;
+    const iconElement = step.querySelector(".icon");
+    iconElement.classList.add(icon)
+    iconElement.setAttribute("style", `background-image: url(${assetUrl(icon)});`);
   } else {
     step.querySelector(".icon").remove();
   }
@@ -52,8 +62,8 @@ async function appendSteps() {
   steps.appendChild(
     makeStep({
       title: "TLS-Zertifikat der Website",
-      icon: "ø",
-      value: "ok",
+      icon: "warning",
+      value: "kapott",
       button: { name: "show", textContent: "Details …" },
     })
   );

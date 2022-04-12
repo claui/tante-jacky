@@ -60,9 +60,17 @@ section.step {
 }
 
 .step .icon {
+  background-size: contain;
+  background-repeat: no-repeat;
   grid-column: 2;
   align-self: baseline;
   justify-self: center;
+  width: 100%;
+  height: 100%;
+}
+
+.icon.warning {
+  background-position-y: 4px;
 }
 
 .step p {
