@@ -22,8 +22,11 @@ function makeStep({ title, value, icon, description, button }) {
 
   if (icon) {
     const iconElement = step.querySelector(".icon");
-    iconElement.classList.add(icon)
-    iconElement.setAttribute("style", `background-image: url(${assetUrl(icon)});`);
+    iconElement.classList.add(icon);
+    iconElement.setAttribute(
+      "style",
+      `background-image: url(${assetUrl(icon)});`
+    );
   } else {
     step.querySelector(".icon").remove();
   }
@@ -43,7 +46,7 @@ function makeStep({ title, value, icon, description, button }) {
   }
 
   return step;
-};
+}
 
 async function appendSteps() {
   const steps = document.getElementById("steps");
