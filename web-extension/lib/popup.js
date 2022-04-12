@@ -1,5 +1,6 @@
-const makeStep = function ({ title, value, icon, description, button }) {
-  const steps = document.getElementById("steps");
+import { sleep } from "./time.js";
+
+function makeStep({ title, value, icon, description, button }) {
   const step = document
     .getElementById("template-step-success")
     .content.cloneNode(true)
@@ -34,26 +35,38 @@ const makeStep = function ({ title, value, icon, description, button }) {
   return step;
 };
 
-steps.appendChild(
-  makeStep({
-    title: "Frontend-Version",
-    value: "0.1.0",
-  })
-);
+async function appendSteps() {
+  const steps = document.getElementById("steps");
 
-steps.appendChild(
-  makeStep({
-    title: "TLS-Zertifikat der Website",
-    icon: "ø",
-    value: "ok",
-    button: { name: "show", textContent: "Details …" },
-  })
-);
+  await sleep(1000);
 
-steps.appendChild(
-  makeStep({
-    title: "Identität der Website",
-    value: "spk-aschaffenburg.de",
-    description: "Sparkasse Aschaffenburg-Alzenau",
-  })
-);
+  steps.appendChild(
+    makeStep({
+      title: "Frontend-Version",
+      value: "0.1.0",
+    })
+  );
+
+  await sleep(1000);
+
+  steps.appendChild(
+    makeStep({
+      title: "TLS-Zertifikat der Website",
+      icon: "ø",
+      value: "ok",
+      button: { name: "show", textContent: "Details …" },
+    })
+  );
+
+  await sleep(1000);
+
+  steps.appendChild(
+    makeStep({
+      title: "Identität der Website",
+      value: "spk-aschaffenburg.de",
+      description: "Sparkasse Aschaffenburg-Alzenau",
+    })
+  );
+}
+
+appendSteps();
