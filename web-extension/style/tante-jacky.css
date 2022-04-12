@@ -1,5 +1,28 @@
-h1 {
-  display: none;
+header {
+  background-color: rgba(0.5, 0.5, 0.5, 0.1);
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  grid-template-rows: repeat(2, auto);
+  padding: 8px;
+  align-content: end;
+}
+
+header h1 {
+  font-size: 24px;
+  font-weight: 300;
+  grid-column: 1;
+  grid-row: span 2;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+header p.subhead {
+  font-size: 11px;
+  grid-column: 2;
+  margin-top: 0;
+  margin-bottom: 0;
+  align-self: end;
+  justify-self: end;
 }
 
 #steps {
