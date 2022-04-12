@@ -69,10 +69,6 @@ section.step {
   height: 100%;
 }
 
-.icon.warning {
-  background-position-y: 4px;
-}
-
 .step p {
   grid-column: 3;
   color: gray;
