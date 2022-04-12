@@ -55,14 +55,14 @@ section.step {
 
 .step h2 {
   grid-column: 1;
-  text-align: right;
   align-self: baseline;
+  justify-self: end;
 }
 
 .step .icon {
   grid-column: 2;
-  text-align: right;
   align-self: baseline;
+  justify-self: center;
 }
 
 .step p {
