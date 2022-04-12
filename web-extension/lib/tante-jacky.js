@@ -1,14 +1,19 @@
-import { sleep } from "./time.js";
+import DomainName from "./net/domain-name.js";
+import UiController from "./ui-controller.js";
 
 const ASSETS = {
   warning: "assets/iso7010-w001.svg",
-}
+};
+
+const upstreamIdentityProvider = {
+  getDomainName: () => new DomainName("spk-aschaffenburg.de"),
+};
 
 function assetUrl(assetName) {
   return browser.runtime.getURL(ASSETS[assetName]);
 }
 
-function makeStep({ title, value, icon, description, button }) {
+function makeStep({ title, value, icon, details, button }) {
   const step = document
     .getElementById("template-step-success")
     .content.cloneNode(true)
@@ -31,8 +36,8 @@ function makeStep({ title, value, icon, description, button }) {
     step.querySelector(".icon").remove();
   }
 
-  if (description) {
-    step.querySelector("small").textContent = description;
+  if (details) {
+    step.querySelector("small").textContent = details;
   } else {
     step.querySelector("small").remove();
   }
@@ -48,38 +53,24 @@ function makeStep({ title, value, icon, description, button }) {
   return step;
 }
 
-async function appendSteps() {
+async function run() {
+  const controller = new UiController({ upstreamIdentityProvider });
   const steps = document.getElementById("steps");
 
-  await sleep(1000);
+  for await (const step of controller.run()) {
+    step.didEnterSuccessState.then((descriptor) => {
+      steps.appendChild(makeStep(descriptor));
+    });
 
-  steps.appendChild(
-    makeStep({
-      title: "Frontend-Version",
-      value: "0.1.0",
-    })
-  );
-
-  await sleep(1000);
-
-  steps.appendChild(
-    makeStep({
-      title: "TLS-Zertifikat der Website",
-      icon: "warning",
-      value: "kapott",
-      button: { name: "show", textContent: "Details …" },
-    })
-  );
-
-  await sleep(1000);
-
-  steps.appendChild(
-    makeStep({
-      title: "Identität der Website",
-      value: "spk-aschaffenburg.de",
-      description: "Sparkasse Aschaffenburg-Alzenau",
-    })
-  );
+    step.didEnterFailureState.then((descriptor) => {
+      steps.appendChild(
+        makeStep({
+          icon: "warning",
+          ...descriptor,
+        })
+      );
+    });
+  }
 }
 
-appendSteps();
+run();
