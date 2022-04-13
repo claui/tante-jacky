@@ -5,7 +5,7 @@ import { sleep } from "../lib/time.js";
 
 import {
   FrontendVersionCheck,
-  TlsCertificateCheck,
+  IncognitoCheck,
   WebsiteIdentityCheck,
   TanChallengeCheck,
 } from "../lib/steps.js";
@@ -20,7 +20,9 @@ describe("UiController", function () {
       beforeEach("object under test", function () {
         steps = new UiController({
           siteIdentityProvider: {
+            hasDomainName: () => true,
             getDomainName: () => new DomainName("spk-aschaffenburg.de"),
+            isIncognito: () => false,
           },
         }).run();
       });
@@ -62,7 +64,7 @@ describe("UiController", function () {
           });
         });
 
-        describe("check TLS certificate", function () {
+        describe("check Incognito mode", function () {
           let step;
 
           beforeEach(async function () {
@@ -71,7 +73,7 @@ describe("UiController", function () {
           });
 
           it("is the correct step", function () {
-            expect(step).to.be.an.instanceof(TlsCertificateCheck);
+            expect(step).to.be.an.instanceof(IncognitoCheck);
           });
 
           describe("#didEnterSuccessState", function () {
@@ -85,10 +87,10 @@ describe("UiController", function () {
             });
 
             describe("result", function () {
-              it("has a valid TLS certificate", async function () {
+              it("says the browser is in standard mode", async function () {
                 expect(await step.didEnterSuccessState).to.include({
-                  title: "TLS-Zertifikat der Website",
-                  value: "ok",
+                  title: "Browsermodus",
+                  value: "Standard",
                 });
               });
             });
@@ -123,7 +125,7 @@ describe("UiController", function () {
                 expect(await step.didEnterSuccessState).to.include({
                   title: "Identität der Website",
                   value: "ok",
-                  details: "spk-aschaffenburg.de",
+                  details: "Die Domain „spk-aschaffenburg.de“ ist in Ordnung.",
                 });
               });
             });
@@ -157,11 +159,11 @@ describe("UiController", function () {
             describe("result", function () {
               specify("the page isn’t asking us for a TAN", async function () {
                 expect(await step.didEnterFailureState).to.include({
-                  title: "Seite fordert TAN für eine Zahlung",
-                  value: "fehlgeschlagen",
+                  title: "Seite verlangt eine TAN",
+                  value: "nein",
                   details:
-                    "Ihr Browser fordert gerade keine TAN für eine Zahlung. " +
-                    "Veranlassen Sie eine Zahlung, die eine TAN erfordert.",
+                    "Diese Seite fordert gerade keine TAN für eine Zahlung. " +
+                    "Veranlasse eine Zahlung, die eine TAN verlangt.",
                 });
               });
             });
@@ -183,7 +185,9 @@ describe("UiController", function () {
       beforeEach("object under test", function () {
         steps = new UiController({
           siteIdentityProvider: {
+            hasDomainName: () => true,
             getDomainName: () => new DomainName("badbank.example.com"),
+            isIncognito: () => false,
           },
         }).run();
       });
@@ -220,10 +224,11 @@ describe("UiController", function () {
               it("has an unknown identity", async function () {
                 expect(await step.didEnterFailureState).to.include({
                   title: "Identität der Website",
-                  value: "fehlgeschlagen",
+                  value: "Seite nicht freigegeben",
                   details:
-                    "Die Domain „badbank.example.com“ ist für dieses " +
-                    "Verfahren nicht freigegeben.",
+                    "Tante Jacky kennt die Seite „badbank.example.com“" +
+                    " nicht. Gehe auf eine andere Webseite und probiere" +
+                    " es nochmal.",
                 });
               });
             });

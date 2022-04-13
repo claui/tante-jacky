@@ -10,8 +10,10 @@ describe("WebsiteIdentityCheck", function () {
 
       this.beforeEach(function () {
         identityCheck = new WebsiteIdentityCheck({
+          hasDomainName: () => true,
           getDomainName: () =>
             Promise.resolve(new DomainName("www.spk-aschaffenburg.de")),
+          isIncognito: () => false,
         }).start();
       });
 
@@ -30,7 +32,7 @@ describe("WebsiteIdentityCheck", function () {
             expect(await identityCheck.didEnterSuccessState).to.include({
               title: "Identität der Website",
               value: "ok",
-              details: "spk-aschaffenburg.de",
+              details: "Die Domain „spk-aschaffenburg.de“ ist in Ordnung.",
             });
           });
         });
@@ -42,10 +44,12 @@ describe("WebsiteIdentityCheck", function () {
 
       this.beforeEach(function () {
         identityCheck = new WebsiteIdentityCheck({
+          hasDomainName: () => true,
           getDomainName: () =>
             Promise.resolve(
               new DomainName("spk-aschaffenburg.de.badbank.example.com")
             ),
+          isIncognito: () => false,
         }).start();
       });
 
@@ -63,10 +67,11 @@ describe("WebsiteIdentityCheck", function () {
           it("is correct", async function () {
             expect(await identityCheck.didEnterFailureState).to.include({
               title: "Identität der Website",
-              value: "fehlgeschlagen",
+              value: "Seite nicht freigegeben",
               details:
-                "Die Domain „spk-aschaffenburg.de.badbank.example.com“" +
-                " ist für dieses Verfahren nicht freigegeben.",
+                "Tante Jacky kennt die Seite „spk-aschaffenburg.de" +
+                ".badbank.example.com“ nicht. Gehe auf eine andere" +
+                " Webseite und probiere es nochmal.",
             });
           });
         });

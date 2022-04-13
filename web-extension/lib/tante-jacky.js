@@ -1,58 +1,7 @@
 import ConsoleFriendlyError from "./console/console-friendly-error.js";
-import DomainName from "./net/domain-name.js";
 import UiController from "./ui-controller.js";
-
-const ASSETS = {
-  warning: "assets/iso7010-w001.svg",
-};
-
-const siteIdentityProvider = {
-  getDomainName: () => new DomainName("spk-aschaffenburg.de"),
-};
-
-function assetUrl(assetName) {
-  return browser.runtime.getURL(ASSETS[assetName]);
-}
-
-function makeStep({ title, value, icon, details, button }) {
-  const step = document
-    .getElementById("template-step-success")
-    .content.cloneNode(true)
-    .querySelector(".step");
-
-  step.querySelector("h2").textContent = title;
-
-  if (value) {
-    step.querySelector("p").textContent = value;
-  }
-
-  if (icon) {
-    const iconElement = step.querySelector(".icon");
-    iconElement.classList.add(icon);
-    iconElement.setAttribute(
-      "style",
-      `background-image: url(${assetUrl(icon)});`
-    );
-  } else {
-    step.querySelector(".icon").remove();
-  }
-
-  if (details) {
-    step.querySelector("small").textContent = details;
-  } else {
-    step.querySelector("small").remove();
-  }
-
-  if (button) {
-    const buttonElement = step.querySelector("form button");
-    buttonElement.setAttribute("name", button.name);
-    buttonElement.textContent = button.textContent;
-  } else {
-    step.querySelector("form").remove();
-  }
-
-  return step;
-}
+import SiteIdentityProvider from "./browser/site-identity-provider.js";
+import { makeStepSection } from "./popup/dom.js";
 
 function logError(error) {
   /*
@@ -71,23 +20,40 @@ function logError(error) {
 }
 
 (async function () {
-  const controller = new UiController({ siteIdentityProvider });
-  const steps = document.getElementById("steps");
+  const controller = new UiController({
+    siteIdentityProvider: new SiteIdentityProvider(),
+  });
+  const stepSections = document.getElementById("steps");
 
   for await (const step of controller.run()) {
-    step.didEnterSuccessState.then((descriptor) => {
-      steps.appendChild(makeStep(descriptor));
-    });
+    const stepSection = { element: null };
+
+    const appendOrReplace = (newElement) => {
+      if (stepSection.element === null) {
+        stepSections.appendChild(newElement);
+      } else {
+        stepSection.element.replaceWith(newElement);
+      }
+      stepSection.element = newElement;
+    };
+
+    step.didEnterSuccessState.then((descriptor) =>
+      appendOrReplace(makeStepSection(descriptor))
+    );
 
     step.didEnterFailureState.then((descriptor) => {
       logError(descriptor);
 
-      steps.appendChild(
-        makeStep({
+      appendOrReplace(
+        makeStepSection({
           icon: "warning",
           ...descriptor,
         })
       );
     });
+
+    step.didEnterRunningState.then((descriptor) =>
+      appendOrReplace(makeStepSection(descriptor))
+    );
   }
 })();

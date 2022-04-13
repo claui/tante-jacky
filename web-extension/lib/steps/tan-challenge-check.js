@@ -6,14 +6,15 @@ export default class TanChallengeCheck extends Step {
 
   constructor() {
     const states = {};
-    super("Seite fordert TAN für eine Zahlung", states);
+    super("Seite verlangt eine TAN", states);
     this.#states = states;
   }
 
   run() {
     throw new StepFailedError(
-      "Ihr Browser fordert gerade keine TAN für eine Zahlung. " +
-        "Veranlassen Sie eine Zahlung, die eine TAN erfordert."
+      "Diese Seite fordert gerade keine TAN für eine Zahlung. " +
+        "Veranlasse eine Zahlung, die eine TAN verlangt.",
+        { result: "nein" },
     );
   }
 }

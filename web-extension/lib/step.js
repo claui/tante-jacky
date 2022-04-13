@@ -1,5 +1,4 @@
 import StateBlockedError from "./errors/state-blocked.js";
-import StepFailedError from "./errors/step-failed.js";
 
 export default class Step {
   #name;
@@ -93,24 +92,11 @@ export default class Step {
   }
 
   #handleError(error) {
-    let stateDescriptor;
-
-    if (error instanceof StepFailedError) {
-      stateDescriptor = {
-        title: this.name,
-        value: error.result,
-        details: error.message,
-        cause: error,
-      };
-    } else {
-      stateDescriptor = {
-        title: this.name,
-        value: "Fehler",
-        details: error.name,
-        cause: error,
-      };
-    }
-
-    this.#states.failed.enter(stateDescriptor);
+    this.#states.failed.enter({
+      title: this.name,
+      value: error?.result ?? "Fehler",
+      details: error.message,
+      cause: error,
+    });
   }
 }

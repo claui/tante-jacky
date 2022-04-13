@@ -1,10 +1,11 @@
+import { APP_NAME } from "../version.js";
 import StepFailedError from "../errors/step-failed.js";
 import DomainName from "../net/domain-name.js";
 import Step from "../step.js";
 
 export default class WebsiteIdentityCheck extends Step {
   static ALLOWED_DOMAIN_NAMES = Object.freeze(
-    ["spk-aschaffenburg.de"].map(DomainName.of)
+    ["spk-aschaffenburg.de"].map(DomainName.ofHostname)
   );
 
   #states;
@@ -18,22 +19,32 @@ export default class WebsiteIdentityCheck extends Step {
   }
 
   async run() {
+    if (!(await this.#siteIdentityProvider.hasDomainName())) {
+      throw new StepFailedError(
+        "Besuche eine Webseite, die eine TAN verlangt.",
+        { result: "Keine Seite aufgerufen" }
+      );
+    }
     const domainName = await this.#siteIdentityProvider.getDomainName();
 
     const allowlistedParentDomainName =
       WebsiteIdentityCheck.#findAllowlistedParentDomainName(domainName);
 
-    if (allowlistedParentDomainName) {
-      this.#states.success.enter({
-        title: this.name,
-        value: "ok",
-        details: allowlistedParentDomainName.hostname,
-      });
-    } else {
+    if (!allowlistedParentDomainName) {
       throw new StepFailedError(
-        `Die Domain „${domainName}“ ist für dieses Verfahren nicht freigegeben.`
+        `${APP_NAME} kennt die Seite „${domainName}“ nicht.` +
+          " Gehe auf eine andere Webseite und probiere es nochmal.",
+        { result: "Seite nicht freigegeben" }
       );
     }
+
+    this.#states.success.enter({
+      title: this.name,
+      value: "ok",
+      details:
+        `Die Domain „${allowlistedParentDomainName.hostname}“` +
+        " ist in Ordnung.",
+    });
   }
 
   static #findAllowlistedParentDomainName(domainName) {

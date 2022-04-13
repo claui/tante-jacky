@@ -1,16 +1,16 @@
 import StateBlockedError from "./errors/state-blocked.js";
 import {
   FrontendVersionCheck,
-  TlsCertificateCheck,
+  IncognitoCheck,
   WebsiteIdentityCheck,
   TanChallengeCheck,
 } from "./steps.js";
 
-import { VERSION } from "./version.js";
+import { APP_VERSION } from "./version.js";
 
 export default class UiController {
   #defaultDependencies = {
-    frontendVersionProvider: { get: () => VERSION },
+    frontendVersionProvider: { get: () => APP_VERSION },
   };
 
   #frontendVersionProvider;
@@ -27,7 +27,7 @@ export default class UiController {
     try {
       yield* this.#waitForAllToSucceedInOrder(
         new FrontendVersionCheck(this.#frontendVersionProvider),
-        new TlsCertificateCheck(this.#siteIdentityProvider),
+        new IncognitoCheck(this.#siteIdentityProvider),
         new WebsiteIdentityCheck(this.#siteIdentityProvider)
       );
 

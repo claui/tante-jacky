@@ -41,7 +41,6 @@ h2, p, button {
 
 section.step {
   display: contents;
-  width: 300px;
   border-bottom: 2px solid #eee;
 }
 
@@ -79,12 +78,13 @@ section.step {
 }
 
 .step form {
-  display: grid;
+  display: contents;
 }
 
 .step button {
   grid-column: 4;
   align-self: baseline;
+  justify-self: end;
   min-width: max-content;
 }
 
