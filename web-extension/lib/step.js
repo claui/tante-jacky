@@ -10,6 +10,21 @@ export default class Step {
     success: { id: "success" },
   };
 
+  #policiesByName = {
+    failed: {
+      allowReject: false,
+      handlerName: "didEnterFailureState",
+    },
+    running: {
+      allowReject: false,
+      handlerName: "didEnterRunningState",
+    },
+    success: {
+      allowReject: true,
+      handlerName: "didEnterSuccessState",
+    },
+  };
+
   didEnterFailureState;
   didEnterRunningState;
   didEnterSuccessState;
@@ -18,34 +33,32 @@ export default class Step {
     this.#name = name;
     Object.assign(states, this.#states);
 
-    this.didEnterFailureState = new Promise((resolve, reject) => {
-      this.#states.failed.enter = resolve;
-      this.#states.failed.prevent = reject;
-    });
+    // Initialize private controllers for states
+    for (const [name, policy] of Object.entries(this.#policiesByName)) {
+      this.#states[name].promise = new Promise((resolve, reject) => {
+        if (policy.allowReject) {
+          this.#states[name].fail = reject;
+        }
+        this.#states[name].enter = resolve;
+      });
+      // Expose the promise as a public field
+      this[policy.handlerName] = this.#states[name].promise;
+    }
 
-    this.didEnterRunningState = new Promise((resolve, reject) => {
-      this.#states.running.enter = resolve;
-      this.#states.running.prevent = reject;
-    });
-
-    this.didEnterSuccessState = new Promise((resolve, reject) => {
-      this.#states.success.enter = resolve;
-      this.#states.success.prevent = reject;
-    });
-
+    // Interlock to reject contradicting states
     const preventStates = (
       { details: message, ...stateDescriptor },
-      ...blockedStates
+      ...stateControllers
     ) => {
-      for (const state of blockedStates) {
-        state.prevent(
-          stateDescriptor?.cause ??
-            new StateBlockedError(message, {
-              blockedState: state.id,
-              ...stateDescriptor,
-            })
-        );
-        state.prevent = () => {};
+      for (const state of stateControllers) {
+        // Toss the reference to the resolver, making it unfulfillable
+        state.enter = (fulfillmentValue) => {
+          throw new StateBlockedError(message, {
+            blockedState: state.id,
+            fulfillmentValue,
+            ...stateDescriptor,
+          });
+        };
       }
     };
 
