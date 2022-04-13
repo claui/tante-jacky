@@ -19,7 +19,7 @@ describe("UiController", function () {
 
       beforeEach("object under test", function () {
         steps = new UiController({
-          upstreamIdentityProvider: {
+          siteIdentityProvider: {
             getDomainName: () => new DomainName("spk-aschaffenburg.de"),
           },
         }).run();
@@ -182,7 +182,7 @@ describe("UiController", function () {
 
       beforeEach("object under test", function () {
         steps = new UiController({
-          upstreamIdentityProvider: {
+          siteIdentityProvider: {
             getDomainName: () => new DomainName("badbank.example.com"),
           },
         }).run();

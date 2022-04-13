@@ -6,7 +6,7 @@ const ASSETS = {
   warning: "assets/iso7010-w001.svg",
 };
 
-const upstreamIdentityProvider = {
+const siteIdentityProvider = {
   getDomainName: () => new DomainName("spk-aschaffenburg.de"),
 };
 
@@ -71,7 +71,7 @@ function logError(error) {
 }
 
 (async function () {
-  const controller = new UiController({ upstreamIdentityProvider });
+  const controller = new UiController({ siteIdentityProvider });
   const steps = document.getElementById("steps");
 
   for await (const step of controller.run()) {

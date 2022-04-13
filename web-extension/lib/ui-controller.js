@@ -14,12 +14,12 @@ export default class UiController {
   };
 
   #frontendVersionProvider;
-  #upstreamIdentityProvider;
+  #siteIdentityProvider;
 
   constructor(dependencies) {
     ({
       frontendVersionProvider: this.#frontendVersionProvider,
-      upstreamIdentityProvider: this.#upstreamIdentityProvider,
+      siteIdentityProvider: this.#siteIdentityProvider,
     } = { ...this.#defaultDependencies, ...dependencies });
   }
 
@@ -27,8 +27,8 @@ export default class UiController {
     try {
       yield* this.#waitForAllToSucceedInOrder(
         new FrontendVersionCheck(this.#frontendVersionProvider),
-        new TlsCertificateCheck(this.#upstreamIdentityProvider),
-        new WebsiteIdentityCheck(this.#upstreamIdentityProvider)
+        new TlsCertificateCheck(this.#siteIdentityProvider),
+        new WebsiteIdentityCheck(this.#siteIdentityProvider)
       );
 
       yield new TanChallengeCheck().start();

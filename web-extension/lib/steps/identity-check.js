@@ -8,17 +8,17 @@ export default class WebsiteIdentityCheck extends Step {
   );
 
   #states;
-  #upstreamIdentityProvider;
+  #siteIdentityProvider;
 
-  constructor(upstreamIdentityProvider) {
+  constructor(siteIdentityProvider) {
     const states = {};
     super("Identität der Website", states);
     this.#states = states;
-    this.#upstreamIdentityProvider = upstreamIdentityProvider;
+    this.#siteIdentityProvider = siteIdentityProvider;
   }
 
   async run() {
-    const domainName = await this.#upstreamIdentityProvider.getDomainName();
+    const domainName = await this.#siteIdentityProvider.getDomainName();
 
     const allowlistedParentDomainName =
       WebsiteIdentityCheck.#findAllowlistedParentDomainName(domainName);
