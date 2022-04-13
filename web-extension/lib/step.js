@@ -37,7 +37,7 @@ export default class Step {
     for (const [name, policy] of Object.entries(this.#policiesByName)) {
       this.#states[name].promise = new Promise((resolve, reject) => {
         if (policy.allowReject) {
-          this.#states[name].fail = reject;
+          this.#states[name].raise = reject;
         }
         this.#states[name].enter = resolve;
       });
@@ -93,20 +93,24 @@ export default class Step {
   }
 
   #handleError(error) {
+    let stateDescriptor;
+
     if (error instanceof StepFailedError) {
-      this.#states.failed.enter({
+      stateDescriptor = {
         title: this.name,
         value: error.result,
         details: error.message,
-      });
-      return;
+        cause: error,
+      };
+    } else {
+      stateDescriptor = {
+        title: this.name,
+        value: "Fehler",
+        details: error.name,
+        cause: error,
+      };
     }
 
-    this.#states.failed.enter({
-      title: this.name,
-      value: "Fehler",
-      details: error.name,
-      cause: error,
-    });
+    this.#states.failed.enter(stateDescriptor);
   }
 }

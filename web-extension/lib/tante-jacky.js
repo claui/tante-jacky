@@ -1,3 +1,4 @@
+import ConsoleFriendlyError from "./console/console-friendly-error.js";
 import DomainName from "./net/domain-name.js";
 import UiController from "./ui-controller.js";
 
@@ -53,7 +54,23 @@ function makeStep({ title, value, icon, details, button }) {
   return step;
 }
 
-async function run() {
+function logError(error) {
+  /*
+   * The `UiController` class is responsible for how errors
+   * interact with the control flow.
+   *
+   * Now all we want to do is log the error to the browser console.
+   * We’ve waited until now to do that because we want to make it
+   * immediately clear to developers that the error comes from
+   * this extension, and from nowhere else.
+   * At this point in the call stack, logging the error makes the
+   * file name of this module appear right next to the logged error.
+   */
+  const errorToLog = error?.cause ?? error?.details ?? error;
+  console.error(errorToLog.message, new ConsoleFriendlyError(errorToLog));
+}
+
+(async function () {
   const controller = new UiController({ upstreamIdentityProvider });
   const steps = document.getElementById("steps");
 
@@ -63,6 +80,8 @@ async function run() {
     });
 
     step.didEnterFailureState.then((descriptor) => {
+      logError(descriptor);
+
       steps.appendChild(
         makeStep({
           icon: "warning",
@@ -71,6 +90,4 @@ async function run() {
       );
     });
   }
-}
-
-run();
+})();
