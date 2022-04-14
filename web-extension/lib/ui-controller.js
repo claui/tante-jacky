@@ -15,11 +15,13 @@ export default class UiController {
 
   #frontendVersionProvider;
   #siteIdentityProvider;
+  #tanChallengeProvider;
 
   constructor(dependencies) {
     ({
       frontendVersionProvider: this.#frontendVersionProvider,
       siteIdentityProvider: this.#siteIdentityProvider,
+      tanChallengeProvider: this.#tanChallengeProvider,
     } = { ...this.#defaultDependencies, ...dependencies });
   }
 
@@ -31,7 +33,7 @@ export default class UiController {
         new WebsiteIdentityCheck(this.#siteIdentityProvider)
       );
 
-      yield new TanChallengeCheck().start();
+      yield new TanChallengeCheck(this.#tanChallengeProvider).start();
     } catch (error) {
       if (error instanceof StateBlockedError) {
         // Already handled through `state.failed`.

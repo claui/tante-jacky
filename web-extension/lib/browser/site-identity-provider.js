@@ -1,4 +1,5 @@
 import DomainName from "../net/domain-name.js";
+import { queryActiveTab } from "./tab.js";
 
 export default class SiteIdentityProvider {
   #_activeTab;
@@ -7,15 +8,7 @@ export default class SiteIdentityProvider {
     if (this.#_activeTab) {
       return this.#_activeTab;
     }
-    const tabsQueryResult = await browser.tabs.query({
-      active: true,
-      currentWindow: true,
-    })
-    if (tabsQueryResult.length < 1
-      || typeof tabsQueryResult[0].url !== "string") {
-      throw new Error("Unable to query the active tab in the current window");
-    }
-    this.#_activeTab = tabsQueryResult[0];
+    this.#_activeTab = await queryActiveTab();
     return this.#_activeTab;
   }
 
@@ -33,4 +26,4 @@ export default class SiteIdentityProvider {
     const tab = await this.#activeTab();
     return tab.incognito;
   }
-};
+}

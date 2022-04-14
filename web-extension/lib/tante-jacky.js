@@ -1,6 +1,7 @@
 import ConsoleFriendlyError from "./console/console-friendly-error.js";
 import UiController from "./ui-controller.js";
 import SiteIdentityProvider from "./browser/site-identity-provider.js";
+import TanChallengeProvider from "./browser/tan-challenge-provider.js";
 import { makeStepSection } from "./popup/dom.js";
 
 function logError(error) {
@@ -22,6 +23,7 @@ function logError(error) {
 (async function () {
   const controller = new UiController({
     siteIdentityProvider: new SiteIdentityProvider(),
+    tanChallengeProvider: new TanChallengeProvider(),
   });
   const stepSections = document.getElementById("steps");
 

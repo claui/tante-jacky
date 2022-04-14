@@ -24,6 +24,9 @@ describe("UiController", function () {
             getDomainName: () => new DomainName("spk-aschaffenburg.de"),
             isIncognito: () => false,
           },
+          tanChallengeProvider: {
+            detectTanMechanism: () => null,
+          },
         }).run();
       });
 
@@ -188,6 +191,9 @@ describe("UiController", function () {
             hasDomainName: () => true,
             getDomainName: () => new DomainName("badbank.example.com"),
             isIncognito: () => false,
+          },
+          tanChallengeProvider: {
+            detectTanMechanism: () => null,
           },
         }).run();
       });
