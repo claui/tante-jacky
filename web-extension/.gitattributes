@@ -26,5 +26,5 @@
 *.yml           text eol=lf
 
 # No need to diff or patch these
-/.yarn/releases/**              binary
+/.yarn/releases/*.cjs           binary
 /.yarn/plugins/**               binary

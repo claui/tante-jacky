@@ -1,38 +1,44 @@
 import StateBlockedError from "./errors/state-blocked.js";
-import StepFailedError from "./errors/step-failed.js";
 import {
   FrontendVersionCheck,
-  TlsCertificateCheck,
+  IncognitoCheck,
   WebsiteIdentityCheck,
   TanChallengeCheck,
 } from "./steps.js";
 
-import { VERSION } from "./version.js";
-
 export default class UiController {
   #defaultDependencies = {
-    frontendVersionProvider: { get: () => VERSION },
+    metadataProvider: {
+      getAppName: () => "Tante Jacky",
+      getAppVersion: () => null,
+    },
   };
 
-  #frontendVersionProvider;
-  #upstreamIdentityProvider;
+  #metadataProvider;
+  #siteIdentityProvider;
+  #tanChallengeProvider;
 
   constructor(dependencies) {
     ({
-      frontendVersionProvider: this.#frontendVersionProvider,
-      upstreamIdentityProvider: this.#upstreamIdentityProvider,
+      metadataProvider: this.#metadataProvider,
+      siteIdentityProvider: this.#siteIdentityProvider,
+      tanChallengeProvider: this.#tanChallengeProvider,
     } = { ...this.#defaultDependencies, ...dependencies });
   }
 
   async *run() {
     try {
+      const metadataProvider = this.#metadataProvider;
+      const siteIdentityProvider = this.#siteIdentityProvider;
+      const tanChallengeProvider = this.#tanChallengeProvider;
+
       yield* this.#waitForAllToSucceedInOrder(
-        new FrontendVersionCheck(this.#frontendVersionProvider),
-        new TlsCertificateCheck(this.#upstreamIdentityProvider),
-        new WebsiteIdentityCheck(this.#upstreamIdentityProvider)
+        new FrontendVersionCheck({ metadataProvider }),
+        new IncognitoCheck({ metadataProvider, siteIdentityProvider }),
+        new WebsiteIdentityCheck({ metadataProvider, siteIdentityProvider })
       );
 
-      yield new TanChallengeCheck().start();
+      yield new TanChallengeCheck({ tanChallengeProvider }).start();
     } catch (error) {
       if (error instanceof StateBlockedError) {
         // Already handled through `state.failed`.

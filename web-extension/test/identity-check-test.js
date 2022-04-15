@@ -3,6 +3,11 @@ import { expect } from "chai";
 import DomainName from "../lib/net/domain-name.js";
 import { WebsiteIdentityCheck } from "../lib/steps.js";
 
+const metadataProvider = {
+  getAppName: () => "Tante Jacky",
+  getAppVersion: () => null,
+};
+
 describe("WebsiteIdentityCheck", function () {
   describe("#run()", function () {
     context("if we’re on a good domain", function () {
@@ -10,8 +15,12 @@ describe("WebsiteIdentityCheck", function () {
 
       this.beforeEach(function () {
         identityCheck = new WebsiteIdentityCheck({
-          getDomainName: () =>
-            Promise.resolve(new DomainName("www.spk-aschaffenburg.de")),
+          metadataProvider,
+          siteIdentityProvider: {
+            hasDomainName: () => true,
+            getDomainName: () => new DomainName("www.spk-aschaffenburg.de"),
+            isIncognito: () => false,
+          },
         }).start();
       });
 
@@ -30,7 +39,7 @@ describe("WebsiteIdentityCheck", function () {
             expect(await identityCheck.didEnterSuccessState).to.include({
               title: "Identität der Website",
               value: "ok",
-              details: "spk-aschaffenburg.de",
+              details: "Die Domain „spk-aschaffenburg.de“ ist in Ordnung.",
             });
           });
         });
@@ -42,10 +51,13 @@ describe("WebsiteIdentityCheck", function () {
 
       this.beforeEach(function () {
         identityCheck = new WebsiteIdentityCheck({
-          getDomainName: () =>
-            Promise.resolve(
-              new DomainName("spk-aschaffenburg.de.badbank.example.com")
-            ),
+          metadataProvider,
+          siteIdentityProvider: {
+            hasDomainName: () => true,
+            getDomainName: () =>
+              new DomainName("spk-aschaffenburg.de.badbank.example.com"),
+            isIncognito: () => false,
+          },
         }).start();
       });
 
@@ -63,10 +75,11 @@ describe("WebsiteIdentityCheck", function () {
           it("is correct", async function () {
             expect(await identityCheck.didEnterFailureState).to.include({
               title: "Identität der Website",
-              value: "fehlgeschlagen",
+              value: "Seite nicht freigegeben",
               details:
-                "Die Domain „spk-aschaffenburg.de.badbank.example.com“" +
-                " ist für dieses Verfahren nicht freigegeben.",
+                "Tante Jacky kennt die Seite „spk-aschaffenburg.de" +
+                ".badbank.example.com“ nicht. Gehe auf eine andere" +
+                " Webseite und probiere es nochmal.",
             });
           });
         });

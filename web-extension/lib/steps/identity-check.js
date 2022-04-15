@@ -4,36 +4,49 @@ import Step from "../step.js";
 
 export default class WebsiteIdentityCheck extends Step {
   static ALLOWED_DOMAIN_NAMES = Object.freeze(
-    ["spk-aschaffenburg.de"].map(DomainName.of)
+    ["spk-aschaffenburg.de"].map(DomainName.ofHostname)
   );
 
   #states;
-  #upstreamIdentityProvider;
+  #metadataProvider;
+  #siteIdentityProvider;
 
-  constructor(upstreamIdentityProvider) {
+  constructor({ metadataProvider, siteIdentityProvider }) {
     const states = {};
     super("Identität der Website", states);
     this.#states = states;
-    this.#upstreamIdentityProvider = upstreamIdentityProvider;
+    this.#metadataProvider = metadataProvider;
+    this.#siteIdentityProvider = siteIdentityProvider;
   }
 
   async run() {
-    const domainName = await this.#upstreamIdentityProvider.getDomainName();
+    if (!(await this.#siteIdentityProvider.hasDomainName())) {
+      throw new StepFailedError(
+        "Besuche eine Webseite, die eine TAN verlangt.",
+        { result: "Keine Seite aufgerufen" }
+      );
+    }
+    const domainName = await this.#siteIdentityProvider.getDomainName();
 
     const allowlistedParentDomainName =
       WebsiteIdentityCheck.#findAllowlistedParentDomainName(domainName);
 
-    if (allowlistedParentDomainName) {
-      this.#states.success.enter({
-        title: this.name,
-        value: "ok",
-        details: allowlistedParentDomainName.hostname,
-      });
-    } else {
+    if (!allowlistedParentDomainName) {
+      const appName = this.#metadataProvider.getAppName();
       throw new StepFailedError(
-        `Die Domain „${domainName}“ ist für dieses Verfahren nicht freigegeben.`
+        `${appName} kennt die Seite „${domainName}“ nicht.` +
+          " Gehe auf eine andere Webseite und probiere es nochmal.",
+        { result: "Seite nicht freigegeben" }
       );
     }
+
+    this.#states.success.enter({
+      title: this.name,
+      value: "ok",
+      details:
+        `Die Domain „${allowlistedParentDomainName.hostname}“` +
+        " ist in Ordnung.",
+    });
   }
 
   static #findAllowlistedParentDomainName(domainName) {

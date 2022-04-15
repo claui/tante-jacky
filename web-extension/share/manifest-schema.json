@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "allOf": [
+    {
+      "$ref": "../vendor/addons-linter-5.0.0/src/schema/imported/manifest.json#/types/ManifestBase"
+    },
+    {
+      "$ref": "../vendor/addons-linter-5.0.0/src/schema/imported/manifest.json#/types/WebExtensionManifest"
+    }
+  ]
+}

@@ -1,0 +1,560 @@
+{
+  "id": "browserAction",
+  "description": "Use browser actions to put icons in the main browser toolbar, to the right of the address bar. In addition to its icon, a browser action can also have a tooltip, a badge, and a popup.",
+  "permissions": [
+    "manifest:action",
+    "manifest:browser_action"
+  ],
+  "types": {
+    "ActionManifest": {
+      "type": "object",
+      "properties": {
+        "default_title": {
+          "type": "string",
+          "preprocess": "localize"
+        },
+        "default_icon": {
+          "$ref": "manifest#/types/IconPath"
+        },
+        "theme_icons": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "manifest#/types/ThemeIcons"
+          },
+          "description": "Specifies icons to use for dark and light themes"
+        },
+        "default_popup": {
+          "type": "string",
+          "format": "relativeUrl",
+          "preprocess": "localize"
+        },
+        "browser_style": {
+          "type": "boolean",
+          "default": false
+        },
+        "default_area": {
+          "description": "Defines the location the browserAction will appear by default.  The default location is navbar.",
+          "type": "string",
+          "enum": [
+            "navbar",
+            "menupanel",
+            "tabstrip",
+            "personaltoolbar"
+          ]
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "name": "setTitle",
+      "type": "function",
+      "description": "Sets the title of the browser action. This shows up in the tooltip.",
+      "async": "callback",
+      "parameters": [
+        {
+          "$merge": {
+            "source": {
+              "$ref": "browserAction#/types/Details"
+            },
+            "with": {
+              "name": "details",
+              "type": "object",
+              "properties": {
+                "title": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "The string the browser action should display when moused over."
+                }
+              },
+              "required": [
+                "title"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "name": "callback",
+          "optional": true,
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "name": "getTitle",
+      "type": "function",
+      "description": "Gets the title of the browser action.",
+      "async": "callback",
+      "parameters": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/types/Details"
+            },
+            {
+              "name": "details"
+            }
+          ]
+        },
+        {
+          "type": "function",
+          "name": "callback",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "setIcon",
+      "type": "function",
+      "description": "Sets the icon for the browser action. The icon can be specified either as the path to an image file or as the pixel data from a canvas element, or as dictionary of either one of those. Either the <b>path</b> or the <b>imageData</b> property must be specified.",
+      "async": "callback",
+      "parameters": [
+        {
+          "$merge": {
+            "source": {
+              "$ref": "browserAction#/types/Details"
+            },
+            "with": {
+              "name": "details",
+              "type": "object",
+              "properties": {
+                "imageData": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/types/ImageDataType"
+                    },
+                    {
+                      "type": "object",
+                      "patternProperties": {
+                        "^[1-9]\\d*$": {
+                          "$ref": "#/types/ImageDataType"
+                        }
+                      }
+                    }
+                  ],
+                  "description": "Either an ImageData object or a dictionary {size -> ImageData} representing icon to be set. If the icon is specified as a dictionary, the actual image to be used is chosen depending on screen's pixel density. If the number of image pixels that fit into one screen space unit equals <code>scale</code>, then image with size <code>scale</code> * 19 will be selected. Initially only scales 1 and 2 will be supported. At least one image must be specified. Note that 'details.imageData = foo' is equivalent to 'details.imageData = {'19': foo}'"
+                },
+                "path": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "patternProperties": {
+                        "^[1-9]\\d*$": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  ],
+                  "description": "Either a relative image path or a dictionary {size -> relative image path} pointing to icon to be set. If the icon is specified as a dictionary, the actual image to be used is chosen depending on screen's pixel density. If the number of image pixels that fit into one screen space unit equals <code>scale</code>, then image with size <code>scale</code> * 19 will be selected. Initially only scales 1 and 2 will be supported. At least one image must be specified. Note that 'details.path = foo' is equivalent to 'details.imageData = {'19': foo}'"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "function",
+          "name": "callback",
+          "optional": true,
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "name": "setPopup",
+      "type": "function",
+      "description": "Sets the html document to be opened as a popup when the user clicks on the browser action's icon.",
+      "async": "callback",
+      "parameters": [
+        {
+          "$merge": {
+            "source": {
+              "$ref": "browserAction#/types/Details"
+            },
+            "with": {
+              "name": "details",
+              "type": "object",
+              "properties": {
+                "popup": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "The html file to show in a popup.  If set to the empty string (''), no popup is shown."
+                }
+              },
+              "required": [
+                "popup"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "name": "callback",
+          "optional": true,
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "name": "getPopup",
+      "type": "function",
+      "description": "Gets the html document set as the popup for this browser action.",
+      "async": "callback",
+      "parameters": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/types/Details"
+            },
+            {
+              "name": "details"
+            }
+          ]
+        },
+        {
+          "type": "function",
+          "name": "callback",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "setBadgeText",
+      "type": "function",
+      "description": "Sets the badge text for the browser action. The badge is displayed on top of the icon.",
+      "async": "callback",
+      "parameters": [
+        {
+          "$merge": {
+            "source": {
+              "$ref": "browserAction#/types/Details"
+            },
+            "with": {
+              "name": "details",
+              "type": "object",
+              "properties": {
+                "text": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "Any number of characters can be passed, but only about four can fit in the space."
+                }
+              },
+              "required": [
+                "text"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "name": "callback",
+          "optional": true,
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "name": "getBadgeText",
+      "type": "function",
+      "description": "Gets the badge text of the browser action. If no tab nor window is specified is specified, the global badge text is returned.",
+      "async": "callback",
+      "parameters": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/types/Details"
+            },
+            {
+              "name": "details"
+            }
+          ]
+        },
+        {
+          "type": "function",
+          "name": "callback",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "setBadgeBackgroundColor",
+      "type": "function",
+      "description": "Sets the background color for the badge.",
+      "async": "callback",
+      "parameters": [
+        {
+          "$merge": {
+            "source": {
+              "$ref": "browserAction#/types/Details"
+            },
+            "with": {
+              "name": "details",
+              "type": "object",
+              "properties": {
+                "color": {
+                  "$ref": "#/types/ColorValue"
+                }
+              },
+              "required": [
+                "color"
+              ]
+            }
+          }
+        },
+        {
+          "type": "function",
+          "name": "callback",
+          "optional": true,
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "name": "getBadgeBackgroundColor",
+      "type": "function",
+      "description": "Gets the background color of the browser action badge.",
+      "async": "callback",
+      "parameters": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/types/Details"
+            },
+            {
+              "name": "details"
+            }
+          ]
+        },
+        {
+          "type": "function",
+          "name": "callback",
+          "parameters": [
+            {
+              "allOf": [
+                {
+                  "$ref": "#/types/ColorArray"
+                },
+                {
+                  "name": "result"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "setBadgeTextColor",
+      "type": "function",
+      "description": "Sets the text color for the badge.",
+      "async": true,
+      "parameters": [
+        {
+          "$merge": {
+            "source": {
+              "$ref": "browserAction#/types/Details"
+            },
+            "with": {
+              "name": "details",
+              "type": "object",
+              "properties": {
+                "color": {
+                  "$ref": "#/types/ColorValue"
+                }
+              },
+              "required": [
+                "color"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "getBadgeTextColor",
+      "type": "function",
+      "description": "Gets the text color of the browser action badge.",
+      "async": true,
+      "parameters": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/types/Details"
+            },
+            {
+              "name": "details"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "enable",
+      "type": "function",
+      "description": "Enables the browser action for a tab. By default, browser actions are enabled.",
+      "async": "callback",
+      "parameters": [
+        {
+          "type": "integer",
+          "optional": true,
+          "name": "tabId",
+          "minimum": 0,
+          "description": "The id of the tab for which you want to modify the browser action."
+        },
+        {
+          "type": "function",
+          "name": "callback",
+          "optional": true,
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "name": "disable",
+      "type": "function",
+      "description": "Disables the browser action for a tab.",
+      "async": "callback",
+      "parameters": [
+        {
+          "type": "integer",
+          "optional": true,
+          "name": "tabId",
+          "minimum": 0,
+          "description": "The id of the tab for which you want to modify the browser action."
+        },
+        {
+          "type": "function",
+          "name": "callback",
+          "optional": true,
+          "parameters": []
+        }
+      ]
+    },
+    {
+      "name": "isEnabled",
+      "type": "function",
+      "description": "Checks whether the browser action is enabled.",
+      "async": true,
+      "parameters": [
+        {
+          "allOf": [
+            {
+              "$ref": "#/types/Details"
+            },
+            {
+              "name": "details"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "openPopup",
+      "type": "function",
+      "requireUserInput": true,
+      "description": "Opens the extension popup window in the active window.",
+      "async": true,
+      "parameters": []
+    }
+  ],
+  "events": [
+    {
+      "name": "onClicked",
+      "type": "function",
+      "description": "Fired when a browser action icon is clicked.  This event will not fire if the browser action has a popup.",
+      "parameters": [
+        {
+          "allOf": [
+            {
+              "$ref": "tabs#/types/Tab"
+            },
+            {
+              "name": "tab"
+            }
+          ]
+        },
+        {
+          "allOf": [
+            {
+              "$ref": "#/types/OnClickData"
+            },
+            {
+              "name": "info",
+              "optional": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "max_manifest_version": 2,
+  "definitions": {
+    "WebExtensionManifest": {
+      "properties": {
+        "action": {
+          "allOf": [
+            {
+              "$ref": "#/types/ActionManifest"
+            },
+            {
+              "min_manifest_version": 3
+            }
+          ]
+        },
+        "browser_action": {
+          "allOf": [
+            {
+              "$ref": "#/types/ActionManifest"
+            },
+            {
+              "max_manifest_version": 2
+            }
+          ]
+        }
+      }
+    }
+  },
+  "refs": {
+    "browserAction#/definitions/WebExtensionManifest": {
+      "namespace": "manifest",
+      "type": "WebExtensionManifest"
+    }
+  }
+}
