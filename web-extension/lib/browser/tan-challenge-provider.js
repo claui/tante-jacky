@@ -2,6 +2,7 @@ import Command from "../content-script/commands.js";
 import ContentScriptResponseError from "../errors/content-script-response.js";
 import MetadataProvider from "./metadata-provider.js";
 import ResponseStatus from "../content-script/responses.js";
+import TanMechanism from "../tan/tan-mechanism.js";
 import { queryActiveTab } from "./tab.js";
 
 export default class TanChallengeProvider {
@@ -27,9 +28,26 @@ export default class TanChallengeProvider {
       file: "/lib/content-script/tante-jacky-content.js",
     });
 
+    const initResponse = await browser.tabs.sendMessage(activeTab.id, {
+      init: {
+        commandConstants: Command,
+        responseStatusConstants: ResponseStatus,
+        tanMechanismConstants: TanMechanism,
+      },
+    });
+    if (typeof initResponse !== "object") {
+      throw new ContentScriptResponseError(
+        "Das Content-Skript ließ sich nicht initialisieren.",
+        initResponse
+      );
+    }
+
     const response = await browser.tabs.sendMessage(activeTab.id, { command });
     if (!response) {
-      throw new Error("Content script did not respond");
+      throw new ContentScriptResponseError(
+        "Das Content-Skript antwortet nicht.",
+        response
+      );
     }
 
     switch (response.status) {

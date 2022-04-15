@@ -4,21 +4,12 @@
   }
   window.isContentScriptSourced = true;
 
-  const Command = {
-    DETECT_TAN_MECHANISM: "detectTanMechanism",
-    SCRAPE_OPTICAL_TAN_CHALLENGE: "scrapeOpticalTanChallenge",
-  };
+  const Command = {};
+  const ResponseStatus = {};
+  const TanMechanism = {};
 
-  const ResponseStatus = {
-    OK: "ok",
-    NOT_FOUND: "notFound",
-    UNKNOWN_COMMAND: "unknownCommand",
-  };
-
-  const TanMechanism = {
-    OPTICAL_FLICKER: "opticalFlicker",
-    OPTICAL_QR: "opticalQr",
-    MANUAL: "manual",
+  const lifecycle = {
+    initialized: false,
   };
 
   const detectTanMechanism = () => {
@@ -62,6 +53,14 @@
 
   browser.runtime.onMessage.addListener((message) => {
     const originalRequest = message;
+
+    if (message.init && !lifecycle.initialized) {
+      lifecycle.initialized = true;
+      Object.assign(Command, message.init.commandConstants);
+      Object.assign(ResponseStatus, message.init.responseStatusConstants);
+      Object.assign(TanMechanism, message.init.tanMechanismConstants);
+      return Promise.resolve({});
+    }
 
     switch (message.command) {
       case Command.DETECT_TAN_MECHANISM:
