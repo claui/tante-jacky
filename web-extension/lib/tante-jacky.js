@@ -1,7 +1,10 @@
 import ConsoleFriendlyError from "./console/console-friendly-error.js";
 import UiController from "./ui-controller.js";
-import SiteIdentityProvider from "./browser/site-identity-provider.js";
-import TanChallengeProvider from "./browser/tan-challenge-provider.js";
+import {
+  MetadataProvider,
+  SiteIdentityProvider,
+  TanChallengeProvider,
+} from "./browser.js";
 import { makeStepSection } from "./popup/dom.js";
 
 function logError(error) {
@@ -21,10 +24,17 @@ function logError(error) {
 }
 
 (async function () {
+  const metadataProvider = new MetadataProvider();
+  const appName = metadataProvider.getAppName();
   const controller = new UiController({
+    metadataProvider,
     siteIdentityProvider: new SiteIdentityProvider(),
     tanChallengeProvider: new TanChallengeProvider(),
   });
+
+  document.querySelector("title").textContent = appName;
+  document.querySelector("#appName").textContent = appName;
+
   const stepSections = document.getElementById("steps");
 
   for await (const step of controller.run()) {

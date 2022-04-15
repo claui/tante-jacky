@@ -12,6 +12,11 @@ import {
 
 import UiController from "../lib/ui-controller.js";
 
+const metadataProvider = {
+  getAppName: () => "Tante Jacky",
+  getAppVersion: () => "0.1.0",
+};
+
 describe("UiController", function () {
   describe("#run()", function () {
     context("we’re on a good website", function () {
@@ -19,6 +24,7 @@ describe("UiController", function () {
 
       beforeEach("object under test", function () {
         steps = new UiController({
+          metadataProvider,
           siteIdentityProvider: {
             hasDomainName: () => true,
             getDomainName: () => new DomainName("spk-aschaffenburg.de"),
@@ -187,6 +193,7 @@ describe("UiController", function () {
 
       beforeEach("object under test", function () {
         steps = new UiController({
+          metadataProvider,
           siteIdentityProvider: {
             hasDomainName: () => true,
             getDomainName: () => new DomainName("badbank.example.com"),

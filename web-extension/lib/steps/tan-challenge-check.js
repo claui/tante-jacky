@@ -6,7 +6,7 @@ export default class TanChallengeCheck extends Step {
   #states;
   #tanChallengeProvider;
 
-  constructor(tanChallengeProvider) {
+  constructor({ tanChallengeProvider }) {
     const states = {};
     super("Seite verlangt eine TAN", states);
     this.#states = states;

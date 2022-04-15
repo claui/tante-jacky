@@ -1,20 +1,20 @@
 import Step from "../step.js";
 
 export default class FrontendVersionCheck extends Step {
-  #frontendVersionProvider;
+  #metadataProvider;
   #states;
 
-  constructor(frontendVersionProvider) {
+  constructor({ metadataProvider }) {
     const states = {};
     super("Frontend-Version", states);
-    this.#frontendVersionProvider = frontendVersionProvider;
+    this.#metadataProvider = metadataProvider;
     this.#states = states;
   }
 
   run() {
     this.#states.success.enter({
       title: this.name,
-      value: this.#frontendVersionProvider.get(),
+      value: this.#metadataProvider.getAppVersion() ?? "nicht verfügbar",
     });
   }
 }

@@ -1,4 +1,3 @@
-import { APP_NAME } from "../version.js";
 import StepFailedError from "../errors/step-failed.js";
 import DomainName from "../net/domain-name.js";
 import Step from "../step.js";
@@ -9,12 +8,14 @@ export default class WebsiteIdentityCheck extends Step {
   );
 
   #states;
+  #metadataProvider;
   #siteIdentityProvider;
 
-  constructor(siteIdentityProvider) {
+  constructor({ metadataProvider, siteIdentityProvider }) {
     const states = {};
     super("Identität der Website", states);
     this.#states = states;
+    this.#metadataProvider = metadataProvider;
     this.#siteIdentityProvider = siteIdentityProvider;
   }
 
@@ -31,8 +32,9 @@ export default class WebsiteIdentityCheck extends Step {
       WebsiteIdentityCheck.#findAllowlistedParentDomainName(domainName);
 
     if (!allowlistedParentDomainName) {
+      const appName = this.#metadataProvider.getAppName();
       throw new StepFailedError(
-        `${APP_NAME} kennt die Seite „${domainName}“ nicht.` +
+        `${appName} kennt die Seite „${domainName}“ nicht.` +
           " Gehe auf eine andere Webseite und probiere es nochmal.",
         { result: "Seite nicht freigegeben" }
       );

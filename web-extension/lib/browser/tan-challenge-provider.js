@@ -1,10 +1,12 @@
 import Command from "../content-script/commands.js";
 import ContentScriptResponseError from "../errors/content-script-response.js";
+import MetadataProvider from "./metadata-provider.js";
 import ResponseStatus from "../content-script/responses.js";
-import { APP_NAME } from "../version.js";
 import { queryActiveTab } from "./tab.js";
 
 export default class TanChallengeProvider {
+  #appName = new MetadataProvider().getAppName();
+
   async detectTanMechanism() {
     return await this.#sendContentScriptCommand(Command.DETECT_TAN_MECHANISM);
   }
@@ -46,7 +48,7 @@ export default class TanChallengeProvider {
 
       default:
         throw new ContentScriptResponseError(
-          `${APP_NAME} versteht die Antwort „${response.status}“ nicht.`,
+          `${this.#appName} versteht die Antwort „${response.status}“ nicht.`,
           response
         );
     }

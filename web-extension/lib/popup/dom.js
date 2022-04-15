@@ -1,4 +1,4 @@
-import { assetUrl } from "../browser/assets.js";
+import { assetUrl } from "../browser.js";
 
 export const makeStepSection = ({ title, value, icon, details, button }) => {
   const step = document

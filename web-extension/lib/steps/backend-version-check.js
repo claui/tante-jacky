@@ -4,7 +4,7 @@ export default class BackendVersionCheck extends Step {
   #backendService;
   #states;
 
-  constructor(backendService) {
+  constructor({ backendService }) {
     const states = {};
     super("Verbindung zum Python-Backend", states);
     this.#backendService = backendService;
@@ -12,7 +12,7 @@ export default class BackendVersionCheck extends Step {
   }
 
   async run() {
-    const backendVersion = await this.#backendService.getVersion();
+    const backendVersion = await this.#backendService.getHelperVersion();
     this.#states.success.enter({
       title: this.name,
       value: "ok",

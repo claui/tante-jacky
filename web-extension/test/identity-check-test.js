@@ -3,6 +3,11 @@ import { expect } from "chai";
 import DomainName from "../lib/net/domain-name.js";
 import { WebsiteIdentityCheck } from "../lib/steps.js";
 
+const metadataProvider = {
+  getAppName: () => "Tante Jacky",
+  getAppVersion: () => null,
+};
+
 describe("WebsiteIdentityCheck", function () {
   describe("#run()", function () {
     context("if we’re on a good domain", function () {
@@ -10,10 +15,12 @@ describe("WebsiteIdentityCheck", function () {
 
       this.beforeEach(function () {
         identityCheck = new WebsiteIdentityCheck({
-          hasDomainName: () => true,
-          getDomainName: () =>
-            Promise.resolve(new DomainName("www.spk-aschaffenburg.de")),
-          isIncognito: () => false,
+          metadataProvider,
+          siteIdentityProvider: {
+            hasDomainName: () => true,
+            getDomainName: () => new DomainName("www.spk-aschaffenburg.de"),
+            isIncognito: () => false,
+          },
         }).start();
       });
 
@@ -44,12 +51,13 @@ describe("WebsiteIdentityCheck", function () {
 
       this.beforeEach(function () {
         identityCheck = new WebsiteIdentityCheck({
-          hasDomainName: () => true,
-          getDomainName: () =>
-            Promise.resolve(
-              new DomainName("spk-aschaffenburg.de.badbank.example.com")
-            ),
-          isIncognito: () => false,
+          metadataProvider,
+          siteIdentityProvider: {
+            hasDomainName: () => true,
+            getDomainName: () =>
+              new DomainName("spk-aschaffenburg.de.badbank.example.com"),
+            isIncognito: () => false,
+          },
         }).start();
       });
 
