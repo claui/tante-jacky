@@ -22,8 +22,8 @@ export default class IncognitoCheck extends Step {
         value: "Privates Fenster",
         details:
           `Soll ${this.#appName} trotzdem fortfahren?` +
-          " Log-Einträge können in der Konsole deines Browsers landen, und" +
-          " das Backend kann Log-Einträge auf dem Gerät hinterlassen." +
+          " Log‑Einträge können in der Konsole deines Browsers landen, und" +
+          " das Backend kann Log‑Einträge auf dem Gerät hinterlassen." +
           " In den Logs können Namen besuchter Webseiten sichtbar sein." +
           " Wenn du trotzdem fortfahren möchtest, dann leere hinterher deine" +
           " Browser-Konsole und lösche die Logs im Backend.",
