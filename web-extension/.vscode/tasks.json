@@ -35,6 +35,26 @@
       }
     },
     {
+      "label": "tante-jacky (web extension): Run using web-ext@npm",
+      "type": "process",
+      "command": "env",
+      "args": [
+        // https://github.com/electron/electron/issues/28436
+        "-u",
+        "GDK_BACKEND",
+        "yarn",
+        "serve"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "clear": true,
+        "showReuseMessage": false
+      }
+    },
+    {
       "label": "tante-jacky (web extension): Run extension and log events",
       "type": "process",
       "command": "env",
