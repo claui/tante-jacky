@@ -3,6 +3,11 @@
 """Backend helper script for Tante Jacky"""
 
 from binascii import unhexlify
+from ctypes import byref, c_int, c_ubyte, create_string_buffer
+import os
+
+from gwenhywfar.plugins.chiptanusb import \
+    GetTanfromUSB_Generator
 
 MAX_NUM_DATA_ELEMENTS_V13X = 3
 LENGTH_BITMASK_V13X = 0b00001111
@@ -135,4 +140,33 @@ def _translate_hhd_v13x(hhd_tan_challenge_hex):
     return dict(generate(hhd_tan_challenge_hex))
 
 
-print(_translate_hhd_v13x(b'11048810123405000123456714312C3233FF'))
+HHD_CHALLENGE_HEX = b'11048810123405000123456714312C3233FF'
+
+# hhd_challenge = _translate_hhd_v13x(HHD_CHALLENGE_HEX)
+
+hhd_challenge = unhexlify(HHD_CHALLENGE_HEX)
+
+USB_CARD_PRELUDE = b'\0\0\0\0\1\0\0\0'
+# usb_card_payload = USB_CARD_PRELUDE + hhd_challenge
+usb_card_payload = hhd_challenge
+
+atc = c_int()
+tan = create_string_buffer(16)
+card_number = create_string_buffer(11)
+end_date = create_string_buffer(5)
+issue_date = create_string_buffer(7)
+
+os.environ['LC_LOGLEVEL'] = 'debug'
+
+GetTanfromUSB_Generator(
+    (c_ubyte * len(usb_card_payload))(*usb_card_payload),
+    len(usb_card_payload),
+    byref(atc),
+    tan,
+    len(tan),
+    card_number,
+    end_date,
+    issue_date,
+)
+
+# https://github.com/aqbanking/libchipcard/blob/4e389464c30c0e2fc098a08b0971a7ee0bb4c946/src/ct/chiptanusb/chiptanusb.c#L211
