@@ -1,3 +1,31 @@
+## Handling vulnerable transitive dependencies
+
+tante-jacky has zero runtime dependencies.
+
+It does has development-time dependencies, though. People are
+frequently discovering vulnerabilities in those packages.
+Therefore, I have to apply patches in order to protect both my own
+development environment and the build machine that you are using to
+package the extension.
+
+I have force-upgraded a vulnerable transitive dependency using a
+shell command:
+<!--
+I have force-upgraded vulnerable transitive dependencies using shell commands. The dependencies need to be upgraded in the given order.
+-->
+
+### Vulnerability in update-notifier, dependency of web-ext v7.1.0
+
+Manually bump `web-ext`’s dependency `update-notifier` to v6.0.2
+in order to bump the transitive dependency `got` to v11.8.5:
+
+```shell
+yarn set resolution --save update-notifier@npm:5.1.0 6.0.2
+```
+
+(Remove this section once an upgrade to `web-ext` is available
+that depends on update-notifier v6.0.2 or higher.)
+
 ## License
 
 This repository contains source code vendored from different parties.
