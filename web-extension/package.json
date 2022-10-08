@@ -7,12 +7,17 @@
   "devDependencies": {
     "chai": "^4.3.6",
     "mocha": "^10.0.0",
-    "web-ext": "^7.1.0"
+    "web-ext": "^7.2.0"
   },
-  "packageManager": "yarn@3.2.1",
+  "packageManager": "yarn@3.2.4",
   "type": "module",
   "scripts": {
+    "clean-install": "yarn install && git checkout -- .vscode/settings.json '.yarn/*/LICENSE'",
     "serve": "web-ext run",
-    "test": "mocha"
+    "test": "mocha",
+    "upgrade-all": "printf >&2 '%s\\n\\t%s\\n' 'Run the following command line manually:' 'yarn set version stable && yarn install && yarn upgrade-packages' && false",
+    "upgrade-lockfile": "yarn up -R '**' && yarn clean-install",
+    "upgrade-packages": "yarn up '**' && yarn up -R '**' && yarn clean-install",
+    "upgrade-yarn-itself": "printf >&2 '%s\\n\\t%s\\n' 'Run the following command line manually:' 'yarn set version stable && yarn install && yarn clean-install' && false"
   }
 }
