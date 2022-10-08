@@ -1,3 +1,58 @@
+## Maintenance
+
+### yarn install
+
+tante-jacky has zero runtime dependencies.
+
+To install the current development dependencies as specified in
+`package.json` and `yarn.lock`, run: `yarn install`
+
+### yarn clean-install
+
+If the Yarn version has changed and you run `yarn install`, Yarn
+will try to upgrade itself. That causes changes to several files,
+such as the `LICENSE` files I have placed into several
+subdirectories.
+
+Anytime that happens, run the `yarn clean-install` script, a wrapper
+around `yarn install` which cleans up afterwards.
+
+Note that the `yarn clean-install` script may fail and tell you to
+run `yarn install` instead. I haven’t figured out why it does that.
+If that happens, run `yarn install` followed by `yarn clean-install`.
+
+### yarn outdated
+
+To see a list of outdated packages, run: `yarn outdated`
+
+### yarn upgrade-lockfile
+
+This runs `yarn up -R '**' && yarn clean-install` behind the scenes
+in order to upgrade all resolutions in the lockfile as far as
+possible, but leaves your `package.json` as is.
+
+### yarn upgrade-packages
+
+The built-in `yarn up` command can be a bit cumbersome to use if you
+want to upgrade all dependencies in one go.
+
+Running the `yarn upgrade-packages` script will upgrade all relevant
+dependencies. That includes the `@yarnpkg` scopes but excludes Yarn
+itself (see the `yarn upgrade-yarn-itself` section).
+
+### yarn upgrade-yarn-itself
+
+To upgrade Yarn PnP to the latest available version, run the
+`yarn upgrade-yarn-itself` script.
+
+Note that the script will only print manual instructions. That’s
+because Yarn makes changes to `package.json`, and that doesn’t play
+well with Yarn PnP in scripts.
+
+### yarn upgrade-all
+
+To also upgrade Yarn itself, run `yarn upgrade-all`.
+
 ## Handling vulnerable transitive dependencies
 
 tante-jacky has zero runtime dependencies.
