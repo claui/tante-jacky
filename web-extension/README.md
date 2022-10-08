@@ -53,33 +53,66 @@ well with Yarn PnP in scripts.
 
 To also upgrade Yarn itself, run `yarn upgrade-all`.
 
-## Handling vulnerable transitive dependencies
+## Handling vulnerable dependencies
+
+### The thing about vulnerabilities in transitive dependencies
 
 tante-jacky has zero runtime dependencies.
 
-It does has development-time dependencies, though. People are
-frequently discovering vulnerabilities in those packages.
-Therefore, I have to apply patches in order to protect both my own
-development environment and the build machine that you are using to
-package the extension.
+It does has development-time dependencies, though. People sometimes
+discover vulnerabilities in packages on which tante-jacky depends.
 
+If that happens and a patch comes out, I need to upgrade the
+affected package to a newer version, which includes the patch.
+This is to protect both my own development environment and the build
+machine you are using to package tante-jacky.
+
+But a vulnerability might also affect a package on which tante-jacky
+depends only indirectly. For example, the development dependency
+`web-ext` used to have a vulnerable sub-dependency, `update-notifier`
+v5.1.0. A patch for that vulnerability existed, but the patched
+version was outside the semver range specified by `web-ext`. That
+means I was unable to upgrade the `update-notifier` package via the
+usual `yarn up` or `yarn up -R` commands.
+
+### Dealing with the risk
+
+If such cases arise, I’m going to try force-upgrading affected
+packages, and document those upgrades in the section
+_List of force-upgraded transitive dependencies_ below.  
+Even if the upgrade happens to fail (or if it breaks the app and I
+have to roll back the upgrade, leaving the vulnerability unpatched),
+I’m also going to document that failure here.
+
+<!-- Remove this line when adding an entry: -->No current entries.
+
+<!--
 I have force-upgraded a vulnerable transitive dependency using a
 shell command:
+-->
 <!--
 I have force-upgraded vulnerable transitive dependencies using shell commands. The dependencies need to be upgraded in the given order.
 -->
 
-### Vulnerability in update-notifier, dependency of web-ext v7.1.0
+<!--
+### Vulnerability in …………, dependency of ………… v…………
 
-Manually bump `web-ext`’s dependency `update-notifier` to v6.0.2
-in order to bump the transitive dependency `got` to v11.8.5:
+I have manually bumped `…………`’s dependency `…………` to
+v………… in order to bump the transitive dependency `…………` to v…………:
 
 ```shell
-yarn set resolution --save update-notifier@npm:5.1.0 6.0.2
+yarn set resolution --save …………@npm:………… …………
 ```
 
-(Remove this section once an upgrade to `web-ext` is available
-that depends on update-notifier v6.0.2 or higher.)
+(Remove this section once an upgrade to `…………` is available
+that depends on ………… v………… or higher.)
+-->
+
+### Former entries which are no longer relevant
+
+- Due to a vulnerability in `update-notifier`, I force-upgraded its
+  version to v6.0.2. But as of `web-ext` v7.2.0, that’s no longer
+  necessary.
 
 ## License
 
